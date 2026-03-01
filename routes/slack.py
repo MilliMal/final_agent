@@ -2,7 +2,6 @@ from flask import Blueprint, request, jsonify
 from slack_bolt import App
 from slack_bolt.adapter.flask import SlackRequestHandler
 import os
-from app import app as flask_app
 from agents.graph import create_agent_graph
 
 slack_bp = Blueprint('slack', __name__, url_prefix='/slack')
