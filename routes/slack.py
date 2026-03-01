@@ -2,17 +2,18 @@ from flask import Blueprint, request, jsonify
 from slack_bolt import App
 from slack_bolt.adapter.flask import SlackRequestHandler
 import os
+from app import app as flask_app
 from agents.graph import create_agent_graph
 
 slack_bp = Blueprint('slack', __name__, url_prefix='/slack')
 
 # Initialize Slack app
-slack_app = App(
+app = App(
     token=os.getenv('SLACK_BOT_TOKEN'),
     signing_secret=os.getenv('SLACK_SIGNING_SECRET')
 )
 
-handler = SlackRequestHandler(slack_app)
+handler = SlackRequestHandler(app)
 
 @slack_bp.route('/events', methods=['POST'])
 def slack_events():
@@ -24,7 +25,7 @@ def slack_commands():
     """Handle Slack slash commands"""
     return handler.handle(request)
 
-@slack_app.message(".*")
+@app.message(".*")
 def handle_message(message, say):
     """Handle incoming Slack messages"""
     user_id = message['user']

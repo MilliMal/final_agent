@@ -6,17 +6,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-key-change-in-production')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///app.db')
-app.config['SESSION_TYPE'] = 'filesystem'
+flask_app = Flask(__name__)
+flask_app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-key-change-in-production')
+flask_app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///app.db')
+flask_app.config['SESSION_TYPE'] = 'filesystem'
 
-db = SQLAlchemy(app)
-CORS(app)
+db = SQLAlchemy(flask_app)
+CORS(flask_app)
 
 # Initialize session
 from flask_session import Session
-Session(app)
+Session(flask_app)
 
 # Import models
 from models import User
@@ -25,14 +25,14 @@ from models import User
 from routes.auth import auth_bp
 from routes.slack import slack_bp
 
-app.register_blueprint(auth_bp)
-app.register_blueprint(slack_bp)
+flask_app.register_blueprint(auth_bp)
+flask_app.register_blueprint(slack_bp)
 
-@app.route('/')
+@flask_app.route('/')
 def index():
     return {'message': 'Agent API is running'}
 
 if __name__ == '__main__':
-    with app.app_context():
+    with flask_app.app_context():
         db.create_all()
-    app.run(debug=os.getenv('FLASK_DEBUG', False), port=int(os.getenv('PORT', 5000)))
+    flask_app.run(debug=os.getenv('FLASK_DEBUG', False), port=int(os.getenv('PORT', 5000)))
